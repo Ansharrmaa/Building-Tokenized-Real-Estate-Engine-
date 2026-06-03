@@ -74,6 +74,13 @@ async fn main() -> anyhow::Result<()> {
     // Build the router
     let app = routes::create_router(state).layer(cors);
 
+    // Serve static files (Flutter Web Build)
+    let frontend_dir = "../frontend/build/web";
+    let serve_dir = tower_http::services::ServeDir::new(frontend_dir)
+        .not_found_service(tower_http::services::ServeFile::new(format!("{}/index.html", frontend_dir)));
+
+    let app = app.fallback_service(serve_dir);
+
     // Bind and serve
     let addr: SocketAddr = format!("{}:{}", cfg.host, cfg.port)
         .parse()

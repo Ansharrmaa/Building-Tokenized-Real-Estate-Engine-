@@ -1,0 +1,11 @@
+{
+  "name": "RealToken Search",
+  "short_name": "RealToken",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#3B82F6",
+  "description": "Tokenized Real Estate Search & Ingestion Engine",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false
+}
