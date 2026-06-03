@@ -32,7 +32,7 @@ RUN mv meilisearch /usr/local/bin/
 # Copy artifacts from builder
 COPY --from=builder /app/backend/target/release/tokenized-real-estate-backend /usr/local/bin/
 COPY --from=builder /app/scripts /app/scripts
-COPY --from=builder /app/frontend/build/web /app/frontend/build/web
+COPY --from=builder /app/frontend/build/web /frontend/build/web
 
 # Copy the start script
 COPY start.sh /app/start.sh
