@@ -1,4 +1,4 @@
-FROM rust:1.79-slim as builder
+FROM rust:slim as builder
 
 # Install dependencies for building
 RUN apt-get update && apt-get install -y pkg-config libssl-dev build-essential curl
