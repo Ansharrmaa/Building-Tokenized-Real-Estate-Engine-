@@ -5,10 +5,6 @@ services:
     region: frankfurt
     plan: free
     dockerCommand: /app/start.sh
-    disk:
-      name: data-storage
-      mountPath: /data
-      sizeGB: 1
     envVars:
       - key: DATABASE_URL
         value: sqlite:///data/real_estate.db?mode=rwc
