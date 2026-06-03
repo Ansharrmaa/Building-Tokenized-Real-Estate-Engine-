@@ -8,7 +8,6 @@ WORKDIR /app
 # Build the Rust application
 COPY backend/ ./backend/
 COPY scripts/ ./scripts/
-COPY data/ ./data/
 # Copy the compiled Flutter web files so the backend can serve them
 COPY frontend/build/web/ ./frontend/build/web/
 
