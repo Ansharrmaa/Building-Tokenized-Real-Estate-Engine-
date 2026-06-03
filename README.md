@@ -1,131 +1,133 @@
-# Tokenized Real Estate Search & Ingestion Engine
+<div align="center">
+  <h1>🏢 Tokenized Real Estate Engine</h1>
+  <p><strong>A high-performance, dual-layer search and ingestion engine for tokenized global real estate.</strong></p>
 
-A high-performance backend for searching and managing tokenized real estate properties across multiple geographies, built with Rust (Actix-web), SQLite, and Meilisearch.
+  [![Rust](https://img.shields.io/badge/Rust-1.75+-orange.svg?style=flat-square&logo=rust)](https://www.rust-lang.org)
+  [![Flutter](https://img.shields.io/badge/Flutter-Web-blue.svg?style=flat-square&logo=flutter)](https://flutter.dev)
+  [![Meilisearch](https://img.shields.io/badge/Meilisearch-Search-FF2E63.svg?style=flat-square)](https://www.meilisearch.com/)
+  [![SQLite](https://img.shields.io/badge/SQLite-Database-003B57.svg?style=flat-square&logo=sqlite)](https://www.sqlite.org/)
+</div>
 
-## Tech Stack
+<hr />
 
-| Component         | Technology                        |
-|-------------------|-----------------------------------|
-| **Language**      | Rust (2021 edition)               |
-| **Web Framework** | Actix-web 4                       |
-| **Database**      | SQLite via sqlx (async, WAL mode) |
-| **Search Engine** | Meilisearch                       |
-| **Serialization** | serde / serde_json                |
-| **Async Runtime** | Tokio                             |
+## 📖 Overview
 
-## Features
+The **Tokenized Real Estate Engine** is a production-grade backend and frontend solution designed to solve complex querying and ingestion requirements for fractionalized real estate assets. It elegantly handles the dichotomy between **fuzzy full-text discovery** (handling misspellings and location matching) and **exhaustive relational filtering** (handling strict price boundaries and property enums).
 
-- **Fuzzy full-text search** across properties and geo entities with typo tolerance
-- **Country boosting** — results from the user's country appear first
-- **Two-tier filtering** — Meilisearch handles text search; SQLite handles numeric range filters
-- **Hierarchical geo entities** — Country → State → City → Locality
-- **Tokenized properties** — Each property has a total value and token size for fractional ownership
-- **Admin API** — CRUD operations for properties and geo entities with API key authentication
-- **Sub-15ms search latency** end-to-end
+By separating concerns into a **Discovery Layer (Meilisearch)** and an **Exhaustive Data Layer (SQLite)**, the platform guarantees sub-15ms search latencies while maintaining strict data integrity and zero-leak geographical constraints.
 
-## Project Structure
+---
 
+## ✨ Key Features
+
+- **🚀 Dual-Tiered Architecture:** Blistering fast search resolution using Meilisearch, paired with the relational robustness of SQLite (WAL mode) for exact-match numerical filtering.
+- **🌍 IP / Country Context Boosting:** Smart search that prioritizes local inventory based on the user's origin (e.g., matching "Marina" to *Dubai Marina* for UAE users, or *Marina Bay* for SG users).
+- **🔒 Secure Ingestion Pipeline:** An authenticated admin API with dynamic IP whitelist resolution capabilities to safely onboard high-value asset metadata.
+- **📱 Flutter Web Client:** A premium, interactive frontend complete with a responsive search bar, custom UI drop-downs, and an interactive **Yield Calculator** for real-time ROI forecasting.
+- **📖 Interactive API Docs:** Fully integrated OpenAPI/Swagger UI endpoint (`/swagger-ui`) built directly into the Rust backend via `utoipa`.
+- **🕵️ Strict "Zero Leaks":** Enforced backend rules ensuring that explicitly 0-result queries return clean, empty arrays rather than generic fallback data.
+
+---
+
+## 🛠 Tech Stack
+
+### **Backend Core**
+- **Rust (Actix-web)** - Highly concurrent, safe, and wildly fast HTTP server.
+- **SQLite (sqlx)** - Asynchronous, connection-pooled relational store running in WAL mode.
+- **Meilisearch** - Dedicated external search cluster for typo-tolerant index resolution.
+- **Utoipa** - Compile-time OpenAPI schema generation and Swagger UI serving.
+
+### **Frontend Client**
+- **Flutter (Web Target)** - Single-codebase framework for crafting beautiful, responsive UIs.
+- **Dart** - Fast, object-oriented language for client-side state and logic.
+
+---
+
+## 🏗 System Architecture
+
+```mermaid
+graph TD
+    Client[Flutter Web Client] -->|Search Query| API[Rust Actix API]
+    Client -->|Granular Filters| API
+    
+    API -->|1. Fuzzy Discovery| MS[(Meilisearch)]
+    MS -.->|Array of Int64 IDs| API
+    
+    API -->|2. Exact Relational Filter| SQ[(SQLite Database)]
+    SQ -.->|Hydrated Property Data| API
+    
+    API -->|JSON Response| Client
 ```
-├── backend/            # Rust application (Actix-web)
-│   ├── src/
-│   ├── Cargo.toml
-│   └── .env            # Environment configuration
-├── scripts/
-│   ├── migrate.sql     # Database schema
-│   └── seed.sql        # Initial seed data
-├── data/               # SQLite database (created at runtime)
-├── bootstrap.sh        # Linux/Mac setup script
-├── bootstrap.ps1       # Windows setup script
-├── ARCH.md             # Architecture documentation
-└── README.md           # This file
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- [Rust & Cargo](https://rustup.rs/) (v1.75+)
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (v3.19+)
+- [Meilisearch Binary](https://github.com/meilisearch/meilisearch/releases) (For local testing, placed in project root)
+
+### 1. Start the Services
+
+To spin up the entire backend stack (including database migrations, seed data, and the Meilisearch sync):
+
+**Windows (PowerShell):**
+```powershell
+powershell -ExecutionPolicy Bypass -File bootstrap.ps1
 ```
 
-## Prerequisites
-
-- [Rust](https://rustup.rs/) (1.75+ recommended)
-- [SQLite3](https://www.sqlite.org/download.html) CLI (for bootstrap scripts)
-- Internet connection (to download Meilisearch on first run)
-
-## Quick Start
-
-### Linux / macOS
-
+**macOS / Linux:**
 ```bash
 chmod +x bootstrap.sh
 ./bootstrap.sh
 ```
 
-### Windows (PowerShell)
+*(Alternatively, run `cargo run` from the `backend/` directory while Meilisearch is running on port 7700).*
 
-```powershell
-powershell -ExecutionPolicy Bypass -File bootstrap.ps1
+### 2. Run the Flutter Frontend
+
+Open a new terminal window, navigate to the frontend directory, and run the web client:
+
+```bash
+cd frontend
+flutter run -d chrome
 ```
 
-### Manual Setup
+---
 
-1. **Start Meilisearch** on port 7700 with master key `masterKey`:
-   ```bash
-   ./meilisearch --master-key masterKey --http-addr 127.0.0.1:7700
-   ```
+## 📚 API Documentation
 
-2. **Create and seed the database:**
-   ```bash
-   mkdir -p data
-   sqlite3 data/real_estate.db < scripts/migrate.sql
-   sqlite3 data/real_estate.db < scripts/seed.sql
-   ```
+Once the backend is running, you can explore the interactive API documentation and test endpoints directly from your browser.
 
-3. **Build and run the backend:**
-   ```bash
-   cd backend
-   cargo run --release
-   ```
+👉 **Swagger UI:** [http://localhost:3000/swagger-ui](http://localhost:3000/swagger-ui)
 
-The server starts on `http://0.0.0.0:3000`.
+### Core Endpoints:
+- `GET /api/v1/search` — Fuzzy search with optional `country` boosting parameter.
+- `GET /api/v1/properties` — Exhaustive filtering array (price, token size, type) using IDs.
+- `POST /api/v1/admin/properties` — Secure payload ingestion (Requires `Bearer` token).
 
-## API Endpoints
+---
 
-### Search
+## 📂 Project Structure
 
-| Method | Endpoint              | Description                          |
-|--------|-----------------------|--------------------------------------|
-| GET    | `/api/search`         | Search properties and geo entities   |
-| GET    | `/api/properties`     | List/filter properties               |
-| GET    | `/api/geo-entities`   | List/filter geo entities             |
+```text
+├── backend/                  # Rust server application
+│   ├── src/                  # Actix routes, DB queries, Search integration
+│   ├── Cargo.toml            # Rust dependencies
+│   └── .env                  # Backend environment variables
+├── frontend/                 # Flutter web client
+│   ├── lib/                  # Screens, UI Components, API Services
+│   └── pubspec.yaml          # Flutter dependencies
+├── scripts/                  # SQL Migrations & Seed data
+│   ├── migrate.sql           # Schema definitions
+│   └── seed.sql              # Global real estate mock data
+├── ARCH.md                   # Deep-dive architecture design decisions
+└── README.md                 # Project documentation
+```
 
-### Admin (requires `X-API-Key` header)
+---
 
-| Method | Endpoint                   | Description              |
-|--------|----------------------------|--------------------------|
-| POST   | `/admin/properties`        | Create a property        |
-| PUT    | `/admin/properties/:id`    | Update a property        |
-| DELETE | `/admin/properties/:id`    | Delete a property        |
-| POST   | `/admin/geo-entities`      | Create a geo entity      |
-| PUT    | `/admin/geo-entities/:id`  | Update a geo entity      |
-| DELETE | `/admin/geo-entities/:id`  | Delete a geo entity      |
+## 🛡️ License & Acknowledgements
 
-## Configuration
-
-All configuration is via environment variables (see `backend/.env`):
-
-| Variable             | Default                                     | Description                     |
-|----------------------|---------------------------------------------|---------------------------------|
-| `DATABASE_URL`       | `sqlite:../data/real_estate.db?mode=rwc`    | SQLite connection string        |
-| `MEILISEARCH_URL`    | `http://localhost:7700`                     | Meilisearch URL                 |
-| `MEILISEARCH_API_KEY`| `masterKey`                                 | Meilisearch master/admin key    |
-| `ADMIN_API_KEY`      | `super-secret-admin-token-2024`             | API key for admin endpoints     |
-| `HOST`               | `0.0.0.0`                                  | Server bind address             |
-| `PORT`               | `3000`                                      | Server port                     |
-
-## Architecture
-
-See [ARCH.md](ARCH.md) for detailed architecture documentation covering:
-- SQLite connection pooling and WAL mode
-- Meilisearch ranking rules and country boosting strategy
-- Two-tier search architecture
-- Performance benchmark targets
-- Background task strategy for search index updates
-
-## License
-
-This project is part of a backend engineering assignment.
+Developed as a rigorous engineering assignment to demonstrate system design, high-speed API routing, frontend/backend integration, and modern search indexing.
