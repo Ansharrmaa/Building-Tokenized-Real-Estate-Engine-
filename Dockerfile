@@ -35,9 +35,9 @@ COPY --from=builder /app/backend/target/release/tokenized-real-estate-backend /u
 COPY --from=builder /app/scripts /app/scripts
 COPY --from=builder /app/frontend/build/web /app/frontend/build/web
 
-# Copy the start script
+# Copy the start script and fix Windows line endings
 COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+RUN sed -i 's/\r$//' /app/start.sh && chmod +x /app/start.sh
 
 # Environment variables
 ENV HOST=0.0.0.0
