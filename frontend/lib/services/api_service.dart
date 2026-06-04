@@ -4,7 +4,7 @@ import '../models/search_result.dart';
 
 /// Service for communicating with the backend REST API.
 class ApiService {
-  static const String _baseUrl = 'http://localhost:3000/api/v1';
+  static const String _baseUrl = '/api/v1';
   static final http.Client _client = http.Client();
 
   /// Search for properties and locations.

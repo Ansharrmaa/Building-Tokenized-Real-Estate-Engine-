@@ -25762,7 +25762,7 @@ break}p=4
 j=t.N
 n=A.ax(["q",a],j,j)
 if(b!=null&&b.length!==0)J.fp(n,"country",b)
-m=A.he("http://localhost:3000/api/v1/search").K2(n)
+m=A.he("/api/v1/search").K2(n)
 s=7
 return A.Q($.awN().tW("GET",m,null).YP(B.ET),$async$YT)
 case 7:l=d
@@ -25814,7 +25814,7 @@ if(d!=null)J.fp(n,"min_value",B.d.a0(d,0))
 if(f!=null)J.fp(n,"max_value",B.d.a0(f,0))
 if(e!=null)J.fp(n,"min_token",B.i.k(e))
 if(g!=null)J.fp(n,"max_token",B.i.k(g))
-m=A.he("http://localhost:3000/api/v1/properties").K2(n)
+m=A.he("/api/v1/properties").K2(n)
 s=7
 return A.Q($.awN().tW("GET",m,null).YP(B.EZ),$async$YR)
 case 7:l=a1

@@ -22,16 +22,18 @@ FROM debian:bookworm-slim
 # Install sqlite3 and required runtime libraries
 RUN apt-get update && apt-get install -y sqlite3 libssl3 ca-certificates curl && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
 # Download and install Meilisearch
 RUN curl -L https://install.meilisearch.com | sh
 RUN mv meilisearch /usr/local/bin/
 
+# Set up working directory structure
+# The backend expects frontend at ../frontend/build/web relative to its workdir
+WORKDIR /app/backend
+
 # Copy artifacts from builder
 COPY --from=builder /app/backend/target/release/tokenized-real-estate-backend /usr/local/bin/
 COPY --from=builder /app/scripts /app/scripts
-COPY --from=builder /app/frontend/build/web /frontend/build/web
+COPY --from=builder /app/frontend/build/web /app/frontend/build/web
 
 # Copy the start script
 COPY start.sh /app/start.sh
